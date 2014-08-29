@@ -69,7 +69,7 @@ $(function() {
             var htmlStr = [
                             '<div class="col-md-4 portfolio-item">',
                                 '<a href="#">',
-                                    '<img class="img-responsive" src="' + imageSrc + '" alt="">',
+                                    '<img class="img-responsive" style="border-style:solid;border-width:5px;border-color:black;height:500px;width:350px"src="' + imageSrc + '" alt="">',
                                 '</a>',
                                 '<h3><center><font face="Maiandra GD">',
                                     '<a href="#">' + movie.title +'</a>',
