@@ -1,8 +1,8 @@
-$(function() {
+
     // your code here
     var config;
-    var baseUrl = 'http://api.themoviedb.org/3/',
-        apiKey = '57ac6b482b34134f62606c12cdaba334';
+    var baseUrl = 'http://api.themoviedb.org/3/';
+    var apiKey = '57ac6b482b34134f62606c12cdaba334';
 
 
     function initialize(callback) {
@@ -24,34 +24,31 @@ $(function() {
 
         $('.btn-now-showing').click(function() {
             loadNowShowing();
-            return  false;
         });
 
         loadNowShowing();
 
         $('.btn-upcoming').click(function() {
-            loadUpcoming();
-            return  false;
+            upcoming();
+            
         });
 
-        loadUpcoming();
+        upcoming();
 
         $('.btn-popular').click(function() {
-            loadPopular();
-            return  false;
+            popular();
+            
         });
 
-        loadPopular();
+        popular();
 
         $('.btn-top-rated').click(function() {
-            loadTopRated();
-            return  false;
+            toprated();
+            
         });
 
-        loadTopRated();
-
+        toprated();
     }
-
     function searchMovie(query) {
         var searchUrl = baseUrl + 'search/movie';
         $('.movies-list').html('');
@@ -62,17 +59,16 @@ $(function() {
             displayMovies(response);
         });
     }
-
     function displayMovies(data) {
         data.results.forEach(function(movie) {
             var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
             var htmlStr = [
                             '<div class="col-md-4 portfolio-item">',
-                                '<a href="#">',
+                                '<a href="/view/'+movie.id+'">',
                                     '<img class="img-responsive" style="border-style:solid;border-width:5px;border-color:black;height:500px;width:350px"src="' + imageSrc + '" alt="">',
                                 '</a>',
                                 '<h3><center><font face="Maiandra GD">',
-                                    '<a href="#">' + movie.title +'</a>',
+                                    '<a href="/view/'+movie.id+'" style="color:black">' + movie.title +'</a>',
                                 '</font></center></h3>',
                             '</div>'
                             ];
@@ -89,8 +85,9 @@ $(function() {
             displayMovies(response);
         });
     }
+    
 
-    function loadUpcoming() {
+    function upcoming() {
         var upcomingUrl = baseUrl + 'movie/upcoming';
         $('.movies-list').html('');
         $.get(upcomingUrl, {
@@ -99,8 +96,9 @@ $(function() {
             displayMovies(response);
         });
     }
+    
 
-    function loadPopular() {
+    function popular() {
         var popularUrl = baseUrl + 'movie/popular';
         $('.movies-list').html('');
         $.get(popularUrl, {
@@ -110,16 +108,66 @@ $(function() {
         });
     }
 
-    function loadTopRated() {
-        var topRatedUrl = baseUrl + 'movie/top_rated';
+    function toprated() {
+        var topratedUrl = baseUrl + 'movie/top-rated';
         $('.movies-list').html('');
-        $.get(topRatedUrl, {
+        $.get(topratedUrl, {
             api_key: apiKey
         }, function(response) {
             displayMovies(response);
         });
     }
     
-    initialize(setEventHandlers);
+    
 
+    function viewMovie(id){
+    $(".movie-list").hide();
+    console.log(id);
+    url = baseUrl + "movie/"+id;
+    reqParam = {api_key:apiKey};
+    $.get(url,reqParam,function(response){
+        $("#title").html(response.original_title);
+        $("#overview").html(response.overview);
+
+        url = baseUrl + "movie/"+id+"/videos";
+        $.get(url,reqParam,function(response){
+            var html = '<embed width="600" height="400" src="https://www.youtube.com/v/'+response.results[0].key+'" type="application/x-shockwave-flash">'
+            $("#trailer").html(html);
+        });
+
+        url = baseUrl + "movie/"+id+"/credits";
+        $.get(url,reqParam,function(response){
+            var casts = "";
+            for(var i=0;i<response.cast.length;i++){
+                casts+= (i!=response.cast.length-1)? '<font face = "Maiandra GD" size = "4" ><center>' + response.cast[i].name+", </center>"
+                    : "<center> and "+response.cast[i].name + " </font> </center>";
+            }
+            $("#casts").html(casts);
+        });
+
+        url = baseUrl + "movie/"+id+"/similar";
+        $.get(url,reqParam,function(response){
+            var movies = response.results;
+            var allMovies = "";
+            for(var i=0;i<movies.length;i++){
+                allMovies += (i==movies.length-1)? '<center> <font size = "4"> <a href="/movie/'+movies[i].id+'">'+movies[i].title +'</a>, '  + "</font> </center>"
+                    : '<center> <font size = "4"> <a href="/movie/'+movies[i].id+'">'+movies[i].title+'</a> ' + "<br> </font></center>";
+            }
+            $("#similar").html(allMovies);
+        });
+
+    });
+}
+$(document).ready(function(){
+
+    $(".btn-top-rated, .btn-popular, .btn-upcoming, .btn-now-showing").click(function(){
+        $(".movie-view").hide();
+        $(".movies-list").show();
+    });
+    initialize(setEventHandlers);
 });
+
+
+
+
+
