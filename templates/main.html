@@ -4,24 +4,34 @@
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
 </head>
 
+<style>
+.under
+{
+position:absolute;
+left:30px;
+top:200px;
+z-index:3;
+}
+
+.below
+{
+position:absolute;
+left:150px;
+top:280px;
+z-index:3;
+}
+.beneath
+{
+position:absolute;
+left:150px;
+top:250px;
+font-color: inherit;
+z-index:3;
+}
+</style>
+
 <body>
 
- <!--   function displayMovies(data) {
-        data.results.forEach(function(movie) {
-        	var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
-         	var htmlStr = [
-                           '<div class="col-md-4 portfolio-item">',
-                                '<a href="/view/'+movie.id+'">',
-                                    '<img class="img-responsive" style="border-style:solid;border-width:5px;border-color:black;height:500px;width:350px"src="' + imageSrc + '" alt="">',
-                                '</a>',
-                                '<h3><center><font face="Maiandra GD">',
-                                    '<a href="/view/'+movie.id+'" style="color:black">' + movie.title +'</a>',
-                                '</font></center></h3>',
-                            '</div>'
-                            ];
-            $('.movies-list').append($(htmlStr.join('')));
-        });
-   } -->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -35,7 +45,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li><a href="javascript:void(0)" class='btn-now-showing'>Now Playing</a></li>
+              <li><a href="javascript:void(0)" class='btn-now-showing'>Now Showing</a></li>
               <li class="divider-vertical"></li>
               <li><a href="javascript:void(0)" class='btn-upcoming'>Upcoming</a></li>
               <li class="divider-vertical"></li>
@@ -57,28 +67,27 @@
     <div class="container" style='top: 70px; position: relative;'>
         <div class='row movies-list'>
 
-
         </div><!-- /.row -->
     </div><!-- /.container -->
 
     {% raw %}
-  <script type="text/x-handlebars-template" id="tpl-displaymovies" >
-                    <div class="col-md-4 portfolio-item" >
-                                <a href="/movie/{{movie-id}}">
-                            <img class="img-responsive movieinfo" src="{{img}}" alt="" style="width: 500px; height:500px; border-style:solid;border-width:5px;border-color:black;">
-                                </a>
-                                <h3>
-                                <center>
-                                    <a href="/movie/{{movie-id}}" style="color:black;text-style:bold;">{{title}}</a>
-                                </center>
-                                </h3>
-                               </div>
-  </script>
+ 		 <script type="text/x-handlebars-template" id="tpl-displaymovies" >
+         	<div class="col-md-4 portfolio-item" >
+
+  	 <a href="/view/{{movie-id}}">
+        <img class="img-responsive movieinfo" src="{{img}}" alt="" style="width: 1000px; height:350px; border-style:solid;border-width:5px;border-color:black;">
+          	<img class="under" src="{{imaged}}" alt="" style="width: 100px; height:130px; border-style:solid; border-color:white; border-width:2px;">
+          		<h2 class ="beneath"> <font face = "Maiandra GD" size="4" color = "white"><strong>{{title}}</strong></font></h2>
+          		<h2 class ="below"> <font face = "Maiandra GD" size="4" color = "white"><strong>{{movie-id}}</strong></font></h2>                  
+<br>
+             </div>
+ 		 </script>
      
-{% endraw %}
+	{% endraw %}
 
-
-
+<br>
+<br>
+	
     <script src="/static/js/vendors/jquery.js"></script>
     <script src="/static/js/vendors/bootstrap.min.js"></script>
     <script src="/static/js/vendors/handlebars.js"></script>

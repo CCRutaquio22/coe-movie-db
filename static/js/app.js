@@ -1,4 +1,4 @@
-    var config;
+ 	var config;
     var baseUrl = 'http://api.themoviedb.org/3/';
     var apiKey = '57ac6b482b34134f62606c12cdaba334';
 
@@ -59,13 +59,26 @@
     }
 
 
-    function displayMovies(data) {
+    function displayMovies(data,category) {
+        $('.movies-list').html('');
+        if(data.results.length > 0){
+            var headerStr = [
+                            '<div class="col-md-12">',
+                                '<h2 style="color:black;" class="page-header"><font face="Arial">'+category+'</font></h2>',
+                            '</div>'
+                        ];
+                         $('.movies-list').append($(headerStr.join('')));
+
         data.results.forEach(function(movie){
-            var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+            var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+            var imagesrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
                var object = {
                     "movie-id" : movie.id,
                     "img" : imageSrc,
-                    "title": movie.title
+                    "imaged" : imagesrc,
+                    "title": movie.title,
+                    "backdrop": movie.name,
+
                };
         var raw = $("#tpl-displaymovies").html();
         var template = Handlebars.compile(raw);
@@ -75,14 +88,14 @@
            })();
         }
 
-    function loadNowShowing() {
-        var nowShowingUrl = baseUrl + 'movie/now_playing';
-        $('.movies-list').html('');
-        $.get(nowShowingUrl, {
-            api_key: apiKey
-        }, function(response) {
-            displayMovies(response);
-        });
+        else{
+            var htmlStr = [
+                    '<h2>',
+                        'Sorry. No Results Found.',
+                    '</h2>'
+            ];
+            $('.movies-list').append($(htmlStr.join('')));
+        }
     }
     
 
@@ -92,7 +105,7 @@
         $.get(upcomingUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies(response, "Upcoming Movies");
         });
     }
     
@@ -103,7 +116,7 @@
         $.get(popularUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies(response, "Popular Movies");
         });
     }
 
@@ -113,60 +126,108 @@
         $.get(topratedUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies(response, "Top Rated Movies");
         });
     }
     
-    
+    function loadNowShowing() {
+        var nowShowingUrl = baseUrl + 'movie/now_playing';
+        $('.movies-list').html('');
+        $.get(nowShowingUrl, {
+            api_key: apiKey
+        }, function(response) {
+            displayMovies(response, "Now Showing");
+        });
+    }    
 
     function viewMovie(id){
     $(".movie-list").hide();
     console.log(id);
     url = baseUrl + "movie/"+id;
     reqParam = {api_key:apiKey};
+
     $.get(url,reqParam,function(response){
         $("#title").html(response.original_title);
         $("#overview").html(response.overview);
+        $("#tagline").html(response.tagline);
 
         url = baseUrl + "movie/"+id+"/videos";
         $.get(url,reqParam,function(response){
-            var html = '<embed width="600" height="400" src="https://www.youtube.com/v/'+response.results[0].key+'" type="application/x-shockwave-flash">'
+            var html = '<embed width="700" height="490" style="border-style:solid;border-width:5px;border-color:white;" src="https://www.youtube.com/v/'+response.results[0].key+'" type="application/x-shockwave-flash">'
             $("#trailer").html(html);
         });
 
+
         url = baseUrl + "movie/"+id+"/credits";
-        $.get(url,reqParam,function(response){
-            var casts = "";
-            for(var i=0;i<response.cast.length;i++){
-                casts+= (i!=response.cast.length-1)? '<font face = "Maiandra GD" size = "4" ><center>' + response.cast[i].name+", </center>"
-                    : "<center> and "+response.cast[i].name + " </font> </center>";
+        $.get(url,reqParam,function(response){        	
+            var casts = response.cast;
+            var allCasts = "";    
+            var imageSrc = config.images.base_url + config.images.poster_sizes[3] ;                  
+            for(var i=0;i<casts.length;i++){
+                allCasts += '<div id="casts" class="col-sm-3 col-xs-6">'+
+               					
+                                '<center><div id="'+casts[i].id+'">'+
+                                '<img id="movie-image" class="img-responsive portfolio-item" style="border-style:solid;border-width:5px;border-color:black; max-height: 200px;" src="'+imageSrc+casts[i].profile_path+'" alt="">'+
+                                '</center>'+
+
+                                '<center><h5>'+
+                                    '<p style="color:#fff;">' +casts[i].name+ ' <br> as <br>' +casts[i].character+ '</p>'+
+                                '</h5></center>'+
+
+                                '<br>' +
+                              '</div></div>';
             }
-            $("#casts").html(casts);
+            $("#casts").html(allCasts);
         });
+
 
         url = baseUrl + "movie/"+id+"/similar";
         $.get(url,reqParam,function(response){
             var movies = response.results;
             var allMovies = "";
+            var imageSrc = config.images.base_url + config.images.poster_sizes[3];            
             for(var i=0;i<movies.length;i++){
-                allMovies += (i==movies.length-1)? '<center> <font size = "4"> <a href="/movie/'+movies[i].id+'">'+movies[i].title +'</a>, '  + "</font> </center>"
-                    : '<center> <font size = "4"> <a href="/movie/'+movies[i].id+'">'+movies[i].title+'</a> ' + "<br> </font></center>";
+                allMovies += '<div id="similar" class="col-sm-3 col-xs-6">'+
+
+                                '<center><h5>'+
+                                    '<a style="color:#fff;" href="/view/'+movies[i].id+'">'+movies[i].title+'</a>'+
+                                '</h5></center>'+
+
+                                '<center><a href="/view/'+movies[i].id+'">'+
+                                    '<img id="movie-image" class="img-responsive portfolio-item" style="border-style:solid;border-width:5px;border-color:black; max-height: 150px;" src="'+imageSrc+movies[i].backdrop_path+'" alt="">'+
+                                '</a></center>'+
+                                '<br>' +
+                              '</div>';
             }
             $("#similar").html(allMovies);
         });
+
+        url = baseUrl + "movie/"+id+"/images";
+        $.get(url,reqParam,function(response){        	
+            var backdrop = response.backdrops;
+            var allBackdrops = "";    
+            var imageSrc = config.images.base_url + config.images.poster_sizes[3] ;                  
+            for(var i=0;i<backdrop.length;i++){
+                allBackdrops += '<div id="backdrops" class="col-sm-4 col-xs-4">'+
+                                '<img style="border-style:solid;border-width:3px;border-color:black; max-height: 200px;" src="'+imageSrc+backdrop[i].file_path+'" alt="">'+
+                                '</center>'+
+
+                                '<br>' +
+                              '</div></div>';
+            }
+            $("#backdrops").html(allBackdrops);
+        });
+
+
+
 
     });
 }
 $(document).ready(function(){
 
-    $(".btn-top-rated, .btn-popular, .btn-upcoming, .btn-now-showing").click(function(){
+    $(".btn-now-showing, .btn-top-rated, .btn-popular, .btn-upcoming").click(function(){
         $(".movie-view").hide();
         $(".movies-list").show();
     });
     initialize(setEventHandlers);
 });
-
-
-
-
-

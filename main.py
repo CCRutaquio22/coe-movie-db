@@ -26,7 +26,8 @@ class ViewHandler(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('templates/view.html')
         self.response.write(template.render(template_values))
 
+
 application = webapp2.WSGIApplication([
-    ('/', MainHandler),
+    ('/', MainHandler),    
     ('/view/(.*)',ViewHandler),    
 ], debug=True)

@@ -901,7 +901,7 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
-  background-color: #D92EFB;
+  background-color: #C0C0C0;
 }
 input,
 button,
@@ -1432,7 +1432,7 @@ pre code {
 .col-xs-12 {
   width: 100%;
 }
-.col-xs-11 {
+.col-xs-11 
   width: 91.66666667%;
 }
 .col-xs-10 {
@@ -1769,10 +1769,10 @@ pre code {
     width: 41.66666667%;
   }
   .col-md-4 {
-    width: 33.33333333%;
+    width: 50%;
   }
   .col-md-3 {
-    width: 25%;
+    width: 32%;
   }
   .col-md-2 {
     width: 16.66666667%;
@@ -3983,7 +3983,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding-top: 10px;
   padding-bottom: 10px;
   line-height: 20px;
-  font-family: Maiandra GD;
+  font-family: Candara;
   font-size: 17px;
 }
 
@@ -4258,8 +4258,8 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 }
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
-  color: #FF1493;
-  background-color: transparent;
+  color: white;
+  background-color: black;
 }
 .navbar-inverse .navbar-nav > .active > a,
 .navbar-inverse .navbar-nav > .active > a:hover,
